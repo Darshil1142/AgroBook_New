@@ -5,11 +5,12 @@ const Transaction = require("../models/transaction.js");
 
 // Route to save a new transaction
 router.post('/save_transaction', async (req, res) => {
-    console.log("darshil")
-    console.log(req.body)
+  console.log("darshil")
+  console.log(req.body)
 
   try {
-    const {
+    const { 
+      shopkeeperid,
       customerId,
       customerName,
       customerPhone,
@@ -19,6 +20,7 @@ router.post('/save_transaction', async (req, res) => {
     } = req.body;
 
     const transaction = new Transaction({
+      shopkeeperid,
       customerId,
       customerName,
       customerPhone,

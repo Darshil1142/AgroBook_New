@@ -34,7 +34,7 @@ router.post("/createcustomer", [
 
     try {
         //find user with req email
-        let customer = await Customer.findOne({ email: req.body.email })
+        let customer = await Customer.findOne({ email: email, shopkeeperid: shopkeeperid })
 
         //if user exist then send bad request
         if (customer) {
@@ -69,7 +69,7 @@ router.post("/createitem", [
 
     try {
         //find user with req email
-        let item = await Item.findOne({ itemname: req.body.itemname })
+        let item = await Item.findOne({ itemname: itemname, shopkeeperid: shopkeeperid })
 
         //if user exist then send bad request
         if (item) {
@@ -92,14 +92,33 @@ router.post("/createitem", [
     }
 });
 
-router.get('/fetch_customers',async (req,res)=> {
-    try{
-        const customers = await Customer.find({});
+// router.get('/fetch_customers',async (req,res)=> {
+//     try{
+//         const customers = await Customer.find({});
+//         res.json(customers);
+//     }
+//     catch(error){
+//         console.error("Error Fetching Customers",error);
+//         res.status(500).json({error:"Internal Server Error"});
+//     }
+// });
+router.get('/fetch_customers', async (req, res) => {
+    try {
+      // Get the user's MongoDB ID from the request
+        // Assuming your User model has a field called 'shopkeeperid' to associate users with customers
+        const user = await User.find({});
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Fetch customers associated with the user's shopkeeperid
+        const customers = await Customer.find({  });
+        
         res.json(customers);
-    }
-    catch(error){
-        console.error("Error Fetching Customers",error);
-        res.status(500).json({error:"Internal Server Error"});
+    } catch (error) {
+        console.error("Error Fetching Customers", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 

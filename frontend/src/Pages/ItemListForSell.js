@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
+import nullImage from "../images/null.png";
 
 function ItemListForSell({ selectedItem, setSelectedItem }) {
     const [items, setitems] = useState([]);
@@ -32,6 +32,9 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
     }
 
     const handleAddClick = (item) => {
+
+        console.log('Adding item:', item);
+
         const existingItem = selectedItem.find((selected) => selected.itemname === item.itemname);
 
         if (existingItem) {
@@ -56,6 +59,11 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
         // setAvailableQuantities(updatedQuantities);
 
         // Fetch the updated quantities for the specific item
+
+
+        console.log('Updated selected items:', selectedItem);
+
+
         fetch('http://localhost:4000/add/fetch_items')
             .then(response => {
                 if (!response.ok) {
@@ -92,61 +100,67 @@ function ItemListForSell({ selectedItem, setSelectedItem }) {
                 />
 
             </div>
-            <div className='mt-6 flex justify-center items-center'>
+            {items.length == 0 ?
+                (<div className="flex flex-col items-center justify-center mt-36">
+                    <img src={nullImage} alt="Description of the image" />
+                    <h3>No Data</h3>
+                </div>
+                ) : (
+                    <div className='mt-6 flex justify-center items-center'>
 
-                <table className="w-1/2 border-collapse">
-                    <thead className="text-center">
-                        <tr>
-                            <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
-                                <div className="">Item ID</div>
-                            </th>
-                            <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Item Name</div>
-                            </th>
-                            <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Item Category</div>
-                            </th>
-                            <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Cost Price</div>
-                            </th>
-                            <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Selling Price</div>
-                            </th>
-                            <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Quantity</div>
-                            </th>
-                            <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">Units</div>
-                            </th>
-                            <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase " >
-                                <div className="">ADD</div>
-                            </th>
+                        <table className="w-1/2 border-collapse">
+                            <thead className="text-center">
+                                <tr>
+                                    <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
+                                        <div className="">Item ID</div>
+                                    </th>
+                                    <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                        <div className="">Item Name</div>
+                                    </th>
+                                    <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                        <div className="">Item Category</div>
+                                    </th>
+                                    <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                        <div className="">Cost Price</div>
+                                    </th>
+                                    <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                        <div className="">Selling Price</div>
+                                    </th>
+                                    <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                        <div className="">Quantity</div>
+                                    </th>
+                                    <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                                        <div className="">Units</div>
+                                    </th>
+                                    <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase " >
+                                        <div className="">ADD</div>
+                                    </th>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.filter((item) => item.itemname.toLowerCase().includes(query.toLowerCase()) || item.itemcategory.toLowerCase().includes(query.toLowerCase())).map((item, index) => (
-                            <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }}  key={index}>
-                                <td className='border border-gray-300 px-4 py-2'>{index + 1}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{item.itemname}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{item.itemcategory}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{item.costprice}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{item.sellingprice}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{item.quantity}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{item.units}</td>
-                                <td className='border border-gray-300 px-4 py-2 cursor-pointer'><button onClick={() => handleAddClick(item)}>
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button></td>
-                                {/* <td className='border border-gray-300 px-4 py-2 '><input type="text" className="narrow-column border-b-4" /></td> */}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items.filter((item) => item.itemname.toLowerCase().includes(query.toLowerCase()) || item.itemcategory.toLowerCase().includes(query.toLowerCase())).map((item, index) => (
+                                    <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
+                                        <td className='border border-gray-300 px-4 py-2'>{index + 1}</td>
+                                        <td className='border border-gray-300 px-4 py-2'>{item.itemname}</td>
+                                        <td className='border border-gray-300 px-4 py-2'>{item.itemcategory}</td>
+                                        <td className='border border-gray-300 px-4 py-2'>{item.costprice}</td>
+                                        <td className='border border-gray-300 px-4 py-2'>{item.sellingprice}</td>
+                                        <td className='border border-gray-300 px-4 py-2'>{item.quantity}</td>
+                                        <td className='border border-gray-300 px-4 py-2'>{item.units}</td>
+                                        <td className='border border-gray-300 px-4 py-2 cursor-pointer'><button onClick={() => handleAddClick(item)}>
+                                            <FontAwesomeIcon icon={faPlus} />
+                                        </button></td>
+                                        {/* <td className='border border-gray-300 px-4 py-2 '><input type="text" className="narrow-column border-b-4" /></td> */}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
 
-            </div>
+                    </div>
+                )}
         </div>
     )
 
 }
-
 export default ItemListForSell

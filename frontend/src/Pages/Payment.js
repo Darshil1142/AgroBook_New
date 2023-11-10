@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { AppState } from "../App.js";
+import swal from 'sweetalert';
+import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 function Payment() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const useAppState = useContext(AppState);
+  const shopkeeperid = useAppState.UserId
+
+
   const searchParams = new URLSearchParams(location.search);
   const customerName = searchParams.get('customerName');
   const totalCost = searchParams.get('totalCost');
@@ -69,6 +78,7 @@ function Payment() {
     if (paymentMethod === 'Cheque') {
       // Create a JSON payload from the chequeDetails
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -93,6 +103,13 @@ function Payment() {
           return response.json();
         })
         .then((data) => {
+          swal({
+            title: "Payment done",
+            icon: "success",
+            button: false,
+            timer: 3000
+          })
+          setChequeDetails([])
           console.log('Cheque payment details saved:', data);
           // Handle success as needed (e.g., show a success message)
         })
@@ -103,6 +120,7 @@ function Payment() {
     }
     else if (paymentMethod === 'Card') {
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -128,6 +146,13 @@ function Payment() {
           return response.json();
         })
         .then((data) => {
+          swal({
+            title: "Payment done",
+            icon: "success",
+            button: false,
+            timer: 3000
+          })
+          setUpiDetails([])
           console.log('Card payment details saved:', data);
           // Handle success as needed (e.g., show a success message)
         })
@@ -138,6 +163,7 @@ function Payment() {
     }
     else if (paymentMethod === 'UPI') {
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -164,6 +190,13 @@ function Payment() {
           return response.json();
         })
         .then((data) => {
+          swal({
+            title: "Payment done",
+            icon: "success",
+            button: false,
+            timer: 3000
+          })
+          setChequeDetails([])
           console.log('UPI payment details saved:', data);
           // Handle success as needed (e.g., show a success message)
         })
@@ -174,6 +207,7 @@ function Payment() {
     }
     else {
       const paymentData = {
+        shopkeeperid,
         totalCost,
         customerName,
         customerPhone,
@@ -199,6 +233,14 @@ function Payment() {
           return response.json();
         })
         .then((data) => {
+          swal({
+            title: "Payment done",
+            icon: "success",
+            button: false,
+            timer: 3000
+          })
+          setCashDetails([])
+          setCashDetails({ ...cashDetails, cash_amount: 0 })
           console.log('Cash details saved:', data);
           // Handle success as needed (e.g., show a success message)
         })
@@ -208,11 +250,18 @@ function Payment() {
         });
     }
 
+    setAmountpaid(0)
+    fetchingRemainingAmount();
+    navigate("/")
+
   };
 
   const fetchingRemainingAmount = async () => {
     const customerPhone = searchParams.get('customerPhone');
-
+    const requestData = {
+      customerPhone: customerPhone,
+      shopkeeperid: shopkeeperid
+    }
 
     try {
       // Fetch and set the previous remaining amount when the component loads
@@ -222,10 +271,13 @@ function Payment() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ customerPhone }),
+        body: JSON.stringify( requestData ),
       });
 
       if (!response.ok) {
+        const cost = parseFloat(totalCost)
+        setRemaining_amount(cost)
+        setTemp(cost)
         throw new Error('Error fetching previous remaining amount');
       }
 

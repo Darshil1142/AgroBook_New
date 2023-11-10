@@ -1,5 +1,10 @@
 const mongoose = require("mongoose")
 const itemSchema =  new mongoose.Schema({
+    shopkeeperid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Reference to the User model
+        required: true,
+    },
     itemname: {
         type: String,
         require: true,

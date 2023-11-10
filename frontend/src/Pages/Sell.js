@@ -4,9 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useContext } from 'react';
+import { AppState } from "../App.js";
 
-function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setPayment }) {
+function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, setcustomerList, setcategoryList, setSell, setPayment,setinvoice }) {
     var today = new Date();
+    const useAppState = useContext(AppState);
+    const userID = useAppState.UserId;
+
 
     const navigate = useNavigate();
 
@@ -111,6 +116,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                 
         // Prepare the data to be sent to your server
         const dataToSave = {
+            shopkeeperid : userID,
             customerId: formData.customerId,
             customerName: formData.customerFirstname + ' ' + formData.customerLastname,
             customerPhone: formData.customerPhone,
@@ -163,6 +169,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                 setSell(false);
                 setcustomerList(false);
                 setcategoryList(false);
+                setinvoice(false)
                 setPayment(true);
                 navigate(`/?customerName=${formData.customerFirstname} ${formData.customerLastname}&totalCost=${totalCost}&customerPhone=${formData.customerPhone}`);
             }

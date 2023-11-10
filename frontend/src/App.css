@@ -21,7 +21,7 @@
 }
 
 .category_del_btn:hover{
-    background-color: rgb(199, 24, 24);
+    background-color: rgb(10, 131, 10);
     color: white;
 }
 
@@ -53,3 +53,4 @@
 .below-span {
     margin-left: 15px;
 }
+

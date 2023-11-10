@@ -4,14 +4,15 @@ const Payment = require('../models/payment.js');
 const ChequeDetails = require('../models/ChequeDetails');
 const CardDetails = require("../models/CardDetails.js")
 const UpiDetails = require("../models/UpiDetails.js");
-const CashDetails = require("../models/cashdetails.js")
+const CashDetails = require("../models/cashdetails.js");
+const Transaction = require("../models/transaction.js")
 
 
 // Create a new payment
 router.post('/confirm_cheque_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const { totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, chequeDetails } = req.body;
+        const { shopkeeperid,totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, chequeDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -28,6 +29,7 @@ router.post('/confirm_cheque_payment', async (req, res) => {
 
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
+            shopkeeperid : shopkeeperid,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -50,7 +52,7 @@ router.post('/confirm_cheque_payment', async (req, res) => {
 router.post('/confirm_card_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const { totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cardDetails } = req.body;
+        const { shopkeeperid,totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cardDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -67,6 +69,7 @@ router.post('/confirm_card_payment', async (req, res) => {
 
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
+            shopkeeperid:shopkeeperid,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -89,7 +92,7 @@ router.post('/confirm_card_payment', async (req, res) => {
 router.post('/confirm_upi_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const { totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, upiDetails } = req.body;
+        const { shopkeeperid, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, upiDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -102,6 +105,7 @@ router.post('/confirm_upi_payment', async (req, res) => {
 
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
+            shopkeeperid : shopkeeperid,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -124,7 +128,7 @@ router.post('/confirm_upi_payment', async (req, res) => {
 router.post('/confirm_cash_payment', async (req, res) => {
     try {
         console.log("backend sideeeee")
-        const { totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cashDetails } = req.body;
+        const { shopkeeperid, totalCost, customerName, customerPhone, amountpaid, remaining_amount, paymentMethod, cashDetails } = req.body;
         console.log("backend side")
         console.log(req.body)
         // Create a new ChequeDetails document
@@ -137,6 +141,7 @@ router.post('/confirm_cash_payment', async (req, res) => {
 
         // Create a new Payment document with a reference to the saved ChequeDetails
         const newPayment = new Payment({
+            shopkeeperid : shopkeeperid,
             totalCost: totalCost,
             customername: customerName,
             customerphoneno: customerPhone,
@@ -160,12 +165,12 @@ router.post('/fetch_remaining_amount', async (req, res) => {
     console.log("backend")
     console.log(req.body)
     try {
-        const { customerPhone } = req.body;
-
+        const customerPhone = req.body.customerPhone;
+        const shopkeeperid = req.body.shopkeeperid;
         // Implement the logic to fetch the remaining amount from the database
         // Use customerPhone to find the specific customer's remaining amount
 
-        const result = await Payment.findOne({ customerphoneno: customerPhone })
+        const result = await Payment.findOne({ customerphoneno: customerPhone, shopkeeperid: shopkeeperid })
             .sort({ _id: -1 }) // Sort by the unique ID in descending order (most recent first)
             .limit(1)
         if (result) {
@@ -179,6 +184,24 @@ router.post('/fetch_remaining_amount', async (req, res) => {
     } catch (error) {
         console.log("backend catch")
         console.error('Error fetching previous remaining amount:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/get_items_bill/:phoneno', async (req, res) => {
+    console.log("be")
+    const phoneno = req.params.phoneno;
+    console.log(phoneno)
+    try {
+        // Find transactions in the database that match the phone number
+        const transactions = await Transaction.find({ customerPhone: phoneno }).sort({ _id: -1 }) 
+            .limit(1)
+
+        // Return the transactions as JSON response
+        console.log(transactions)
+        res.json(transactions);
+    } catch (error) {
+        console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

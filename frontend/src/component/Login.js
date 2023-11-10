@@ -15,9 +15,9 @@ const Login = () => {
     password: "",
   });
 
-  
+
   const { setData } = useData();
-  const {setshopname} = useData();
+  const { setshopname } = useData();
 
   async function validateData() {
     const url = "http://localhost:4000/auth/login";
@@ -31,8 +31,11 @@ const Login = () => {
     const data = await res.json();
     const username = data.data.user.username;
     const shopname = data.data.user.shopname;
+    const userId = data.data.user.id
     console.log(username)
     console.log(shopname)
+    console.log("Darshil")
+    console.log(userId);
     setData(username);
     setshopname(shopname);
 
@@ -53,10 +56,9 @@ const Login = () => {
       // });
 
       navigate("/")
-      
 
-
-    } else {
+    }
+    else {
       swal({
         title: data["message"],
         icon: "error",
@@ -84,9 +86,9 @@ const Login = () => {
 
 
   return (
-    
+
     <div className="min-h-screen flex items-center justify-center">
-      
+
       <video
         className="absolute top-0 left-0 object-cover w-full h-full opacity-80 z-0"
         loop

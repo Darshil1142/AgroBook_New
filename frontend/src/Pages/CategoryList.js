@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from "react";
 import swal from "sweetalert";
+import { useContext } from 'react';
+import { AppState } from "../App.js";
+import nullImage from "../images/null.png"
 
 function CategoryList() {
+
+  const useAppState = useContext(AppState);
+  const userID = useAppState.UserId;
+  // console.log("category frontend")
+  // console.log(userID);
+
+
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
+
   useEffect(() => {
     fetchCategory();
-    console.log(categories[0]);
+    // console.log(categories[0]);
   }, []); // Empty dependency array means this effect runs once on component mount
 
   const handleAddCategory = (e) => {
@@ -35,7 +46,16 @@ function CategoryList() {
   };
 
   async function fetchCategory() {
-    fetch("http://localhost:4000/category_crud/categories") // Use the correct URL for your backend endpoint
+    const requestData = {
+      shopkeeperid: userID,
+    };
+    fetch("http://localhost:4000/category_crud/fetch_categories", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    }) // Use the correct URL for your backend endpoint
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -45,6 +65,10 @@ function CategoryList() {
       .then((data) => {
         // console.log(data);
         setCategories(data);
+        console.log(data)
+        // console.log(categories)
+        // console.log("jiii")
+        // console.log(categories.length)
       })
       .catch((error) => {
         console.error("Error fetching categories:", error);
@@ -52,17 +76,35 @@ function CategoryList() {
   }
 
   async function addNewCategory() {
+    const requestData = {
+      shopkeeperid: userID,
+      Category: newCategory
+    };
+
+    // console.log(requestData)
+
     const url = "http://localhost:4000/category_crud/newcategory";
     const data = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ newCategory }),
+      body: JSON.stringify(requestData),
     });
 
     const res = await data.json();
-    console.log(res);
+    // console.log("error come in frontend")
+    // console.log(res)
+    if (res.status == 400) {
+      swal({
+        title: "Category not added",
+        icon: "error",
+        button: false,
+        timer: 3000
+      })
+      setNewCategory("");
+    }
+    // console.log(res);
     swal({
       title: "Category Added succesfully",
       icon: "success",
@@ -70,15 +112,14 @@ function CategoryList() {
       timer: 3000
     })
     setNewCategory("");
-
     fetchCategory();
   }
 
-  const handleDeleteCategory = async (Id)=>{
-    let data = await fetch(`http://localhost:4000/category_crud/delete-Category/${Id}`,{
-      method : 'delete',
-      headers : {
-        'Content-Type' : 'application/json'
+  const handleDeleteCategory = async (Id) => {
+    let data = await fetch(`http://localhost:4000/category_crud/delete-Category/${Id}`, {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json'
       }
     })
     console.log(data)
@@ -92,12 +133,9 @@ function CategoryList() {
     fetchCategory();
   }
 
-  // const changeColor = (selectedRow)=>{
-  //   if (selectedRow !== undefined) {
-  //     setChangeColor({ selectedRow  });
-  //   }
-  // }
-  return ( 
+
+  return (
+
     <div className="container mx-auto">
       <div className="mt-4  flex justify-center items-center ">
         <input
@@ -115,41 +153,49 @@ function CategoryList() {
           Add
         </button>
       </div>
-      <div className="mt-8 flex justify-center items-center">
-        <table className="w-1/2 border-collapse">
-          <thead className="text-center">
-            <tr>
-              <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
-                <div className="">ID</div>
-              </th>
-              <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                <div className="">Name</div>
-              </th>
-              <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories? categories && categories.map((category, index) => (
-              // {console.log(category.category_name)}
-              <tr className="text-center capitalize category_row hover:border-2 hover:border-black hover:rounded-md" style={{backgroundColor : index%2===0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
-                <td className='border border-gray-300 px-2 py-2 ml-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p>
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {category.category_name}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <button
-                    className="category_del_btn"
-                     onClick={()=>handleDeleteCategory(category._id)}
-                      >
-                    Delete
-                  </button>
-                </td>
+      {categories.length == 0 ? (
+        <div className="flex flex-col items-center justify-center mt-36">
+          <img src={nullImage} alt="Description of the image" />
+          <h3>No Data</h3>
+        </div>
+      ) : (
+
+        <div className="mt-8 flex justify-center items-center">
+          <table className="w-1/2 border-collapse">
+            <thead className="text-center">
+              <tr>
+                <th className=" rounded-tl-xl border-gray-700 bg-gray-700 text-white  py-2 text-center text-xs font-medium uppercase">
+                  <div className="">ID</div>
+                </th>
+                <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                  <div className="">Name</div>
+                </th>
+                <th className="rounded-tr-xl border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase"></th>
               </tr>
-            )) : "No Data"}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {categories ? categories && categories.map((category, index) => (
+                // {console.log(category.category_name)}
+                <tr className="text-center capitalize category_row hover:border-2 hover:border-black hover:rounded-md" style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={index}>
+                  <td className='border border-gray-300 px-2 py-2 ml-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p>
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {category.category_name}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    <button
+                      className="category_del_btn"
+                      onClick={() => handleDeleteCategory(category._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              )) : "No Data"}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 

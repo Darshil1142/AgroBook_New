@@ -57,15 +57,20 @@ router.post("/createuser", [
             email: email,
             shopname:shopname
         })
-        return res.status(200).json({ message: "Successfully signup" , user})
+        let jwtSecretKey = process.env.JWT_SECRET_KEY;
+        console.log(process.env.JWT_SECRET_KEY)
+        console.log(jwtSecretKey);
+        let data = {
+            time: Date(),
+            userId: user._id,
+        }
+        const token = jwt.sign(data, jwtSecretKey);
+        return res.status(200).json({ message: "Successfully signup" })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });
     }
 })
-
-
-
 
 //ROUTE 2 : Authenticate a user  :POST "/auth/login". it Does Not require login
 router.post("/login", [
@@ -107,6 +112,15 @@ router.post("/login", [
             return res.status(400).json({ message: "please Enter correct creadencial - password incorrect" })
         }
 
+        let jwtSecretKey = process.env.JWT_SECRET_KEY;
+        console.log(process.env.JWT_SECRET_KEY)
+        console.log(jwtSecretKey);
+        let data1 = {
+            time: Date(),
+            userId: user._id,
+        }
+        const token = jwt.sign(data1, jwtSecretKey);
+
         const data = {
             user: {
                 id: user.id,
@@ -116,7 +130,7 @@ router.post("/login", [
             }
         }
 
-        return res.status(200).json({ message: "Successfully Logged In" ,data})
+        return res.status(200).json({ message: "Successfully Logged In" ,data })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });
