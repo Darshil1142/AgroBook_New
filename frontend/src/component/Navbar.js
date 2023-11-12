@@ -4,17 +4,19 @@ import Logo from '../images/Agro.png';
 import { Link } from 'react-router-dom';
 import { AppState } from '../App';
 import { useData } from '../useContext/DataContext';
-import {BsShop} from 'react-icons/bs'
+import { BsShop } from 'react-icons/bs'
+import useLogout from '../hooks/useLogout';
 
-const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, setcategoryList, setcustomerList,setSell,setPayment,setinvoice  }) => {
+
+const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, setcategoryList, setcustomerList, setSell, setPayment, setinvoice }) => {
 
   const [open, setOpen] = useState(false);
 
-  const { data , shopname} = useData();
+  const { data, shopname } = useData();
 
   const useAppState = useContext(AppState);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-
+  const logout = useLogout();
   // const [customer,setCustomer]=new useState(false);
   const toggleMobileMenu = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -37,10 +39,10 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
 
           <ul className={`md:flex md:flex-row md:space-x-4 ${showMobileMenu ? 'block mt-2 md:mt-0 ' : 'hidden md:block md:mt-0'} `}>
             {!useAppState.login ?
-              links.map((link,index) => (
+              links.map((link, index) => (
                 <li key={link.name} className="text-xl text-white">
                   <Link to={link.link} key={index} className={`hover:text-white p-2 ${showMobileMenu ? 'block  mt-4' : ''} hover:bg-[#1F3F49] hover:rounded-t-2xl hover:rounded-t-2xl hover:text-white duration-200 flex items-center`}>
-                    {link.icon} &nbsp; 
+                    {link.icon} &nbsp;
                     {link.name}
                   </Link>
                 </li>
@@ -49,7 +51,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
               <li className="text-xl">
                 <Link to="/dashboard" className={`hover:text-green-800 p-2 ${showMobileMenu ? 'block  mt-4' : ''} hover:bg-[#1F3F49] hover:rounded-t-2xl hover:rounded-t-2xl hover:text-white duration-200`}>
                   <span>Welcome {shopname} </span>
-                  <BsShop className='ml-2 inline'/>
+                  <BsShop className='ml-2 inline' />
                 </Link>
               </li>
             }
@@ -71,7 +73,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
             </div>
             :
             <div className={`md:block ${showMobileMenu ? 'block mt-2 md:mt-0' : 'hidden md:block md:mt-0'}`}>
-              <Link to="/">
+              <Link to="/dashboard">
                 <button onClick={() => {
                   setAddItem(false)
                   setContact(false)
@@ -86,7 +88,7 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
                   Customer +
                 </button>
               </Link>
-              <Link to="/">
+              <Link to="/dashboard">
                 <button onClick={() => {
                   setContact(false)
                   setitemList(false)
@@ -101,11 +103,14 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
                   Item +
                 </button>
               </Link>
-              <Link>
-                <div className='bg-[#1F3F49] w-[50px] rounded-full ml-[320px] mt-[-43px] p-2 drop-shadow-xl hover:bg-white hover:text-black hover:border-2'>
-                  <p className='text-2xl hover:text-black text-white pl-2' onClick={() => setOpen(!open)}>{data.charAt(0).toUpperCase()}</p>
-                </div>
-              </Link>
+              {
+                useAppState.login &&
+                <Link>
+                  <div className='bg-[#1F3F49] w-[50px] rounded-full ml-[320px] mt-[-43px] p-2 drop-shadow-xl hover:bg-white hover:text-black hover:border-2'>
+                    <p className='text-2xl hover:text-black text-white pl-2' onClick={() => setOpen(!open)}>{data.charAt(0).toUpperCase()}</p>
+                  </div>
+                </Link>
+              }
             </div>
           }
 
@@ -118,7 +123,12 @@ const Navbar = ({ links, setAddCustomer, setContact, setitemList, setAddItem, se
           <ul className='p-2'>
             <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link>Profile</Link></li>
             <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link to="/changePsw">Change Password</Link></li>
-            <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'><Link to="/login">Log Out</Link></li>
+            <li className='px-2 py-2 text-white text-md hover:bg-white hover:text-blue-950 cursor-pointer rounded-lg'>
+              <span onClick={(e)=>{
+                e.stopPropagation()
+                logout()
+              }}>Log Out</span>
+            </li>
           </ul>
         </div>
       )}

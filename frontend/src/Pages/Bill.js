@@ -12,6 +12,7 @@ function Bill() {
     const phoneno = searchParams.get('phoneno');
     const [transactionData, setTransactionData] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
     useEffect(() => {
         const url = `http://localhost:4000/payment/get_items_bill/${phoneno}`;
@@ -44,7 +45,7 @@ function Bill() {
     }
 
     const handleNavigate = () => {
-        navigate('/')
+        navigate('/dashboard')
     }
 
     return (

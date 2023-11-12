@@ -1,6 +1,7 @@
 
 import './App.css';
 // import Navbar from './component/Navbar';
+import { BrowserRouter } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './Pages/HomePage';
 import SignupPage from './component/SignupPage.js';
@@ -25,7 +26,7 @@ import Sell from './Pages/Sell'
 import Analysis from './Pages/Analysis';
 import Payment from "./Pages/Payment.js";
 import Bill from './Pages/Bill';
-
+import PersistLogin from './component/PersistLogin.js';
 
 const AppState = createContext();
 
@@ -38,38 +39,41 @@ function App() {
 
     // <BrowserRouter>
     <AppState.Provider value={{ login, setLogin, UserId, setUserId }}>
-      <div className='app'>
-        <Routes>
-          {
-            login ?
-              <Route path="/" element={<Dashboard />} />
-              :
-              <Route path="/" element={<HomePage />} />
-          }
+        <BrowserRouter>
+          <Routes>
+            <Route element={<PersistLogin />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/CustomerList" element={<CustomerList />} />
+              <Route path="/newcategory" element={<CategoryList />} />
+              <Route path="/payment" element={<Payment />} />
+            </Route>
 
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/itemtable" element={<Itemtable />} />
-          <Route path="/services" element={<Service />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/FormInput" element={<FormInput />} />
-          <Route path="/changePsw" element={<ChangePsw />} />
-          <Route path="/itemtable" element={<Itemtable />} />
-          <Route path="/addCustomer" element={<AddCustomer />} />
-          <Route path="/CustomerEditInput" element={<CustomerEditInput />} />
-          <Route path="/newcategory" element={<CategoryList />} />
-          <Route path="/CustomerList" element={<CustomerList />} />
-          <Route path="/forgot" element={<ForgotPsw />} />
-          <Route path="/forgotpassword/:id/:token" element={<ResetPsw />} />
-          <Route path="/itemList" element={<ItemList />} />
-          <Route path='/footer' element={<Footer />} />
-          <Route path='/scrollToTop' element={<ScrollToTop />} />
-          <Route path="/sell" element={<Sell />} />
-          <Route path="/analysis" element={<Analysis />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/bill" element={<Bill />} />
-        </Routes>
-      </div>
+            <Route path="/" element={<HomePage />} />
+
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/itemtable" element={<Itemtable />} />
+            <Route path="/services" element={<Service />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/FormInput" element={<FormInput />} />
+            <Route path="/changePsw" element={<ChangePsw />} />
+            <Route path="/itemtable" element={<Itemtable />} />
+            <Route path="/addCustomer" element={<AddCustomer />} />
+            <Route path="/CustomerEditInput" element={<CustomerEditInput />} />
+            <Route path="/newcategory" element={<CategoryList />} />
+            <Route path="/CustomerList" element={<CustomerList />} />
+            <Route path="/forgot" element={<ForgotPsw />} />
+            <Route path="/forgotpassword/:id/:token" element={<ResetPsw />} />
+            <Route path="/itemList" element={<ItemList />} />
+            <Route path='/footer' element={<Footer />} />
+            <Route path='/scrollToTop' element={<ScrollToTop />} />
+            <Route path="/sell" element={<Sell />} />
+            <Route path="/analysis" element={<Analysis />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/bill" element={<Bill />} />
+          </Routes>
+
+        </BrowserRouter>
     </AppState.Provider>
     // </BrowserRouter>
 

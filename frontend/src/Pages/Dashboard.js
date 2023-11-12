@@ -24,6 +24,7 @@ export default function Dashboard() {
     { name: "Services", link: "/services" },
     { name: "Contact Us", link: "/contact" },
     { name: "Dashboard", link: "/dashboard" },
+    //{ name: "Payment", link:"/payment"}
   ];
 
   //for sell page
@@ -79,7 +80,7 @@ export default function Dashboard() {
                 }`}
             >
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setContact(false);
@@ -101,7 +102,7 @@ export default function Dashboard() {
                 }`}
             >
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setContact(false);
@@ -123,7 +124,7 @@ export default function Dashboard() {
                 }`}
             >
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setitemList(false);
@@ -143,7 +144,7 @@ export default function Dashboard() {
             <tr className={`mt-2 border-b-2 hover:bg-gray-300 hover:text-black  border-slate-500 h-20  flex items-center justify-center  cursor-pointer ${categoryList ? "bg-[#1F3F49] text-white" : ""
               }`}>
               <Link
-                to="/"
+                to="/dashboard"
                 onClick={() => {
                   setAddItem(false);
                   setitemList(false);

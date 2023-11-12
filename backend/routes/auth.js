@@ -8,9 +8,9 @@ const bcrypt = require('bcryptjs');
 
 const transpoter = nodemailer.createTransport({
     service: 'gmail',
-    auth:{
-        user:"ashishmak2406@gmail.com",
-        pass:"absq uyme ugbo gnud"
+    auth: {
+        user: "ashishmak2406@gmail.com",
+        pass: "absq uyme ugbo gnud"
     }
 })
 
@@ -55,7 +55,7 @@ router.post("/createuser", [
             name: name,
             password: password,
             email: email,
-            shopname:shopname
+            shopname: shopname
         })
         let jwtSecretKey = process.env.JWT_SECRET_KEY;
         console.log(process.env.JWT_SECRET_KEY)
@@ -112,25 +112,32 @@ router.post("/login", [
             return res.status(400).json({ message: "please Enter correct creadencial - password incorrect" })
         }
 
-        let jwtSecretKey = process.env.JWT_SECRET_KEY;
-        console.log(process.env.JWT_SECRET_KEY)
-        console.log(jwtSecretKey);
-        let data1 = {
-            time: Date(),
-            userId: user._id,
-        }
-        const token = jwt.sign(data1, jwtSecretKey);
+        // let jwtSecretKey = process.env.JWT_SECRET_KEY;
+        // console.log(process.env.JWT_SECRET_KEY)
+        // console.log(jwtSecretKey);
+        // let data1 = {
+        //     time: Date(),
+        //     userId: user._id,
+        // }
+        // const token = jwt.sign(data1, jwtSecretKey);
 
         const data = {
             user: {
                 id: user.id,
-                username:user.name,
-                psw:user.password,
-                shopname:user.shopname
+                username: user.name,
+                psw: user.password,
+                shopname: user.shopname
             }
         }
 
-        return res.status(200).json({ message: "Successfully Logged In" ,data })
+        // creating a JWT token
+        const jwtToken = jwt.sign(data, 'test');
+        res.cookie('jwt', jwtToken, { httpOnly: true })
+
+        // saving the JWT token of the current user in the DB
+        await User.findByIdAndUpdate(user._id, { ...user._doc, user_token: jwtToken }, { new: true });
+
+        return res.status(200).json({ message: "Successfully Logged In", jwtToken })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: "Internal server error" });
@@ -138,88 +145,88 @@ router.post("/login", [
 })
 
 //ROUTE for Forgot Password
-router.post("/sendPassowordLink",async(req,res)=>{
+router.post("/sendPassowordLink", async (req, res) => {
     console.log(req.body);
 
-    const {email}  = req.body;
-    if(!email){
-        res.status(401).json({message:"Enter Your Email"})
+    const { email } = req.body;
+    if (!email) {
+        res.status(401).json({ message: "Enter Your Email" })
     }
     try {
-        let user= await User.findOne({email:email});
+        let user = await User.findOne({ email: email });
 
         //token generate for reset password
-        const token = jwt.sign({_id:user.id},keysecret,{
-            expiresIn:"120s"
+        const token = jwt.sign({ _id: user.id }, keysecret, {
+            expiresIn: "120s"
         });
-        
-        const userToken = await User.findByIdAndUpdate({_id:user.id},{verifytoken:token},{new:true});
+
+        const userToken = await User.findByIdAndUpdate({ _id: user.id }, { verifytoken: token }, { new: true });
 
         console.log(userToken);
-        
-        if(userToken){
-            const mailOptions={
-                from:"ashishmak2406@gmail.com",
-                to:email,
-                subject:`Reset your passwod`,
-                text : `This Link Valid For 2 minutes http://localhost:3000/forgotpassword/${user.id}/${userToken.verifytoken}`
+
+        if (userToken) {
+            const mailOptions = {
+                from: "ashishmak2406@gmail.com",
+                to: email,
+                subject: `Reset your passwod`,
+                text: `This Link Valid For 2 minutes http://localhost:3000/forgotpassword/${user.id}/${userToken.verifytoken}`
             }
-            transpoter.sendMail(mailOptions,(error,info)=>{
-                if(error){ 
-                   return res.status(401).json({message:"email not send "})
+            transpoter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return res.status(401).json({ message: "email not send " })
                 }
-                else{
-                  return res.status(201).json({message:"email sent success "})
+                else {
+                    return res.status(201).json({ message: "email sent success " })
                 }
             });
         }
-        return res.status(201).json({message:"email sent success "})
+        return res.status(201).json({ message: "email sent success " })
     } catch (error) {
-        res.status(401).json({message:"invalid user"})
+        res.status(401).json({ message: "invalid user" })
     }
 })
 
 
 //VERIFY USER FOR FORGOT PASSWORD
-router.get("/forgotpassword/:id/:token",async(req,res)=>{
-    const {id,token} = req.params;
+router.get("/forgotpassword/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
     try {
-        const validateuser = await User.findOne({_id:id,verifytoken:token})
-        
-        const verifyToken = jwt.verify(token,keysecret);
-        if(validateuser && verifyToken._id){
-            return res.status(201).json({validateuser})
+        const validateuser = await User.findOne({ _id: id, verifytoken: token })
+
+        const verifyToken = jwt.verify(token, keysecret);
+        if (validateuser && verifyToken._id) {
+            return res.status(201).json({ validateuser })
         }
-        else{
-            return res.status(404).json({message:"User not exist"});
+        else {
+            return res.status(404).json({ message: "User not exist" });
         }
-        
+
     } catch (error) {
-       return res.status(401).json({error});
+        return res.status(401).json({ error });
     }
 })
 
-     //CHANGE PASSWORD
-     
-     router.post('/:id/:token',async(req,res)=>{
-         const {id,token} = req.params ;
-         const {password} = req.body;
-         try {
-             const validateuser = await User.findOne({_id:id,verifytoken:token})
-             
-             const verifyToken = jwt.verify(token,keysecret);
-             if(validateuser && verifyToken._id){
-                 const newpassword = await (password);
-                 const setnewuserpassword = await User.findByIdAndUpdate({_id:id},{password:newpassword});
-                 setnewuserpassword.save();
-                 return res.status(201).json({setnewuserpassword})
-             }
-             else{
-                 return res.status(404).json({message:"User not exist"});
-             }
-         } catch (error) {
-             return res.status(401).json({error});
-         }
-     })
+//CHANGE PASSWORD
+
+router.post('/:id/:token', async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+    try {
+        const validateuser = await User.findOne({ _id: id, verifytoken: token })
+
+        const verifyToken = jwt.verify(token, keysecret);
+        if (validateuser && verifyToken._id) {
+            const newpassword = await (password);
+            const setnewuserpassword = await User.findByIdAndUpdate({ _id: id }, { password: newpassword });
+            setnewuserpassword.save();
+            return res.status(201).json({ setnewuserpassword })
+        }
+        else {
+            return res.status(404).json({ message: "User not exist" });
+        }
+    } catch (error) {
+        return res.status(401).json({ error });
+    }
+})
 
 module.exports = router

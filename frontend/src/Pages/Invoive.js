@@ -41,9 +41,7 @@ function Invoice() {
     }
 
     useEffect(() => {
-
         fetchCustomers();
-
     }, []);
 
     return (

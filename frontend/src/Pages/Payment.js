@@ -252,7 +252,7 @@ function Payment() {
 
     setAmountpaid(0)
     fetchingRemainingAmount();
-    navigate("/")
+    navigate("/payment")
 
   };
 

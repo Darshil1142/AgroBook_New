@@ -171,7 +171,7 @@ function Sell({  formData, setAddCustomer, setContact, setitemList, setAddItem, 
                 setcategoryList(false);
                 setinvoice(false)
                 setPayment(true);
-                navigate(`/?customerName=${formData.customerFirstname} ${formData.customerLastname}&totalCost=${totalCost}&customerPhone=${formData.customerPhone}`);
+                navigate(`/dashboard?customerName=${formData.customerFirstname} ${formData.customerLastname}&totalCost=${totalCost}&customerPhone=${formData.customerPhone}`);
             }
         });
 
