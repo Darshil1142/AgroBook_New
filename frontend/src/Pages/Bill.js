@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useData } from '../useContext/DataContext';
+
 
 function Bill() {
     
@@ -13,6 +15,7 @@ function Bill() {
     const [transactionData, setTransactionData] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const {data,shopname} = useData();
 
     useEffect(() => {
         const url = `http://localhost:4000/payment/get_items_bill/${phoneno}`;
@@ -41,16 +44,25 @@ function Bill() {
     }, []);
 
     const handlePrint = () => {
-        window.print();
+        // Apply styles to hide buttons before printing
+        const billSection = document.getElementById('bill-section');
+        if (billSection) {
+            billSection.classList.add('printing');
+            setTimeout(() => {
+                window.print();
+                // Remove the added class after printing
+                billSection.classList.remove('printing');
+            }, 0);
+        }
     }
-
     const handleNavigate = () => {
         navigate('/dashboard')
     }
 
     return (
-        <div className="h-screen flex justify-center items-center bg-gray-100">
+        <div className="flex justify-center items-center bg-gray-100 overflow-y-auto">
             <div className="max-w-md p-6 bg-white rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4 text-black-600">{shopname}</h2>
                 <h2 className="text-2xl font-bold mb-4 text-green-600">Bill Details</h2>
 
                 <p className="mb-4 text-gray-600">Customer Name : {name}</p>

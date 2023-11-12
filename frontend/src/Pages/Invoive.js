@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { AppState } from "../App.js";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useData } from '../useContext/DataContext';
 
 function Invoice() {
     const [customers, setCustomers] = useState([]);
@@ -11,6 +12,8 @@ function Invoice() {
     const userID = useAppState.UserId;
 
     const navigate = useNavigate();
+
+    const { data, shopname } = useData();
 
     // const handleInvoice=(customer)=>{
     //        navigate(`/bill?customerName=${customer.firstname} ${customer.lastname}&customerPhone=${customer.phoneno}`);

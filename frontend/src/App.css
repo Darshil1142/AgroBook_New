@@ -54,3 +54,6 @@
     margin-left: 15px;
 }
 
+#bill-section.printing button {
+    display: none;
+}
