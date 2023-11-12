@@ -7,6 +7,7 @@ import { useData } from '../useContext/DataContext';
 
 function Invoice() {
     const [customers, setCustomers] = useState([]);
+    const [transactions, setTransactions] = useState([]);
     const [query, setQuery] = useState("")
     const useAppState = useContext(AppState);
     const userID = useAppState.UserId;
@@ -19,9 +20,9 @@ function Invoice() {
     //        navigate(`/bill?customerName=${customer.firstname} ${customer.lastname}&customerPhone=${customer.phoneno}`);
     // }
 
-    async function fetchCustomers() {
+    async function fetchTransactions() {
         try {
-            fetch('http://localhost:4000/add/fetch_customers'
+            fetch('http://localhost:4000/transaction/fetch_transactions'
             ).then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok')
@@ -29,7 +30,7 @@ function Invoice() {
                 return response.json()
             })
                 .then(data => {
-                    setCustomers(data)
+                    setTransactions(data)
                 })
                 .catch(error => {
                     console.error('Error fetching Customers: ', error);
@@ -42,7 +43,7 @@ function Invoice() {
     }
 
     useEffect(() => {
-        fetchCustomers();
+        fetchTransactions();
     }, []);
 
     return (
@@ -64,11 +65,11 @@ function Invoice() {
                                 <div className="">CID </div>
                             </th>
                             <th className=" border-gray-700 w-auto py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
-                                <div className="">First Name</div>
+                                <div className="">Customer Name</div>
                             </th>
-                            <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
+                            {/* <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Last Name</div>
-                            </th>
+                            </th> */}
                             <th className=" border-gray-700 px-4 py-2  bg-gray-700 text-white text-center text-xs font-medium  uppercase">
                                 <div className="">Phone No</div>
                             </th>
@@ -79,14 +80,14 @@ function Invoice() {
                         </tr>
                     </thead>
                     <tbody>
-                        {customers.filter((customer) => customer.firstname.toLowerCase().includes(query.toLowerCase()) || customer.lastname.toLowerCase().includes(query.toLowerCase()) || customer.phoneno.includes(query)).map((customer, index) => (
-                            <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={customer._id} >
+                        {transactions.filter((transaction) => transaction.customerName.toLowerCase().includes(query.toLowerCase()) || transaction.customerPhone.includes(query)).map((transaction, index) => (
+                            <tr className='text-center capitalize hover:border-2 hover:border-black hover:rounded-md' style={{ backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#f8f8f8' }} key={transaction._id} >
                                 <td className='border border-gray-300 px-4 py-2 m-2 rounded bg-[1F3F49]'><p className='bg-gray-700 text-white w-8 h-8 rounded-full mt-1'>{index + 1}</p></td>
-                                <td className='border border-gray-300 px-4 py-2'>{customer.firstname}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{customer.lastname}</td>
-                                <td className='border border-gray-300 px-4 py-2'>{customer.phoneno}</td>
+                                <td className='border border-gray-300 px-4 py-2'>{transaction.customerName}</td>
+                                {/* <td className='border border-gray-300 px-4 py-2'>{customer.lastname}</td> */}
+                                <td className='border border-gray-300 px-4 py-2'>{transaction.customerPhone}</td>
                                 <td className='border border-gray-300 px-4 py-2'>
-                                    <Link to={`/bill?name=${customer.firstname} ${customer.lastname}&phoneno=${customer.phoneno}`}>
+                                    <Link to={`/bill?name=${transaction.customerName} &phoneno=${transaction.customerPhone}`}>
                                         <button className="category_del_btn">INVOICE</button>
                                     </Link>
                                 </td>

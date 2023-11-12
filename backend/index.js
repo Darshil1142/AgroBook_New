@@ -5,6 +5,7 @@ const auth = require("./routes/auth.js");
 const category_crud = require("./routes/category_crud.js");
 const add = require("./routes/add.js")
 const dlt=require("./routes/delete.js")
+const transaction = require("./routes/transaction.js")
 const save=require("./routes/save.js")
 const cors = require("cors")
 const generate = require("./routes/generate.js");
@@ -56,7 +57,7 @@ app.use("/payment", Payment);
 app.use("/generate",generate)
 app.get("/refresh", handleRefresh) ;
 app.get("/logout", handleLogout) ;
-
+app.use("/transaction",transaction)
 
 app.listen(port, (err) => {
     console.log(`Server Running on port ${port}`)
