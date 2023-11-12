@@ -21,8 +21,6 @@ function Invoice() {
 
     async function fetchCustomers() {
         try {
-
-
             fetch('http://localhost:4000/add/fetch_customers'
             ).then(response => {
                 if (!response.ok) {
