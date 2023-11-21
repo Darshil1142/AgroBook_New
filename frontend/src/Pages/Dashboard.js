@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../component/Navbar.js";
 import Itemtable from "../component/Itemtable.js";
 import { Link } from "react-router-dom";
@@ -24,6 +24,7 @@ export default function Dashboard() {
     { name: "Services", link: "/services" },
     { name: "Contact Us", link: "/contact" },
     { name: "Dashboard", link: "/dashboard" },
+    { name: "Customer List", link:"/CustomerList"}
     //{ name: "Payment", link:"/payment"}
   ];
 
@@ -48,9 +49,13 @@ export default function Dashboard() {
   const [analysis, setAnalysis] = useState(false);
   const [payment, setPayment] = useState(false);
 
-
-
-
+ useEffect(()=>{
+  const name = localStorage.getItem('name') ; 
+  if(name === 'customerList') setcustomerList(true) ;
+  if(name === 'itemList') setitemList(true) ;
+  if(name === 'categoryList') setcategoryList(true) ;
+  if(name === 'invoice') setinvoice(true) ;
+ }, [])
 
   return (
     <>
@@ -92,6 +97,7 @@ export default function Dashboard() {
                   setPayment(false);
                   setinvoice(false)
                   setcustomerList(true);
+                  localStorage.setItem('name','customerList') ;
                 }}
               >
                 Customer List
@@ -114,6 +120,7 @@ export default function Dashboard() {
                   setcustomerList(false);
                   setinvoice(false)
                   setitemList(true);
+                  localStorage.setItem('name','itemList') ;
                 }}
               >
                 Item List
@@ -136,6 +143,7 @@ export default function Dashboard() {
                   setPayment(false);
                   setinvoice(false)
                   setcategoryList(true);
+                  localStorage.setItem('name','categoryList') ;
                 }}
               >
                 categoryList
@@ -155,7 +163,8 @@ export default function Dashboard() {
                   setAnalysis(false);
                   setPayment(false);
                   setcategoryList(false);
-                  setinvoice(true)
+                  setinvoice(true);
+                  localStorage.setItem('name','invoice') ;
                 }}
               >
                 Invoice

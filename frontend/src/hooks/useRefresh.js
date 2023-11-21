@@ -15,7 +15,7 @@ const useRefresh = () => {
     const { setData, setshopname } = useData();
 
     const refresh = async ()=> {
-        const response = await API.get('/refresh')
+        const response = await API.get('/refresh') ;
         const user_token = response.data.user_token ;
         const user = jwtDecode(user_token).user ;
         

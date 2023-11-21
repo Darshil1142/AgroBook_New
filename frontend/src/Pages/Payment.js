@@ -252,8 +252,7 @@ function Payment() {
 
     setAmountpaid(0)
     fetchingRemainingAmount();
-    navigate("/payment")
-
+    //navigate("/payment")
   };
 
   const fetchingRemainingAmount = async () => {

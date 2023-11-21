@@ -7,7 +7,7 @@ function Itemtable() {
         <div className="container mx-auto">
             <div className="mt-4  flex justify-center items-center">
                 <ItemList />
-                
+               
             </div>
         </div>
     )
